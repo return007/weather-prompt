@@ -1,0 +1,81 @@
+WEATHERFILE=`realpath ~/.weatherinfo`
+CITY=""
+APIKEY=""
+
+get_weather () {
+    # Fetches weather data from OpenWeather API, when needed.
+    # The weather data is fetched once an hour
+    # Most recent weather data is stored offline in $WEATHERFILE
+
+    # Arguments:
+    #  $1 : Name of the current city to fetch weather data for
+    #  $2 : Free APIKEY from https://openweathermap.org/
+
+    fetch_weather=
+    if [ -f "$WEATHERFILE" ]; then
+      modified_more_than_hour_ago=`find $WEATHERFILE -mmin +10`
+      if [ "$modified_more_than_hour_ago" ]; then
+        fetch_weather="yes"
+      fi
+    else
+      fetch_weather="yes"
+    fi
+
+    if [ "$fetch_weather" ]; then
+      response=`curl -XGET "api.openweathermap.org/data/2.5/weather?q=$CITY&appid=$APIKEY" 2>/dev/null`
+      response=${response// /}
+      case "$response" in
+        *\"cod\":401*)
+          # HTTP 401 - Unauthorized, maybe APIKEY is incorrect, not yet activated or not passed
+          temperature="Unauthorized"
+          weather_emoji=
+          ;;
+        *\"cod\":200*)
+          # HTTP 200 - OK
+          temperature_regex='"temp":([0-9.]+)'
+          [[ $response =~ $temperature_regex ]]
+          temperature=${BASH_REMATCH[1]}
+          temperature=$( bc <<< "$temperature-273.15" )
+
+          weather_main_regex='"main":"([A-Za-z]+)"'
+          [[ $response =~ $weather_main_regex ]]
+          weather=${BASH_REMATCH[1]}
+
+          if [[ $weather == "Thunderstorm" ]]; then
+            weather_emoji='\U26C8'
+          elif [[ $weather == "Drizzle" ]]; then
+            weather_emoji='\U1F327'
+          elif [[ $weather == "Rain" ]]; then
+            weather_emoji='\U1F327'
+          elif [[ $weather == "Snow" ]]; then
+            weather_emoji='\U1F328'
+          elif [[ $weather == "Fog" || $weather == "Haze" || $weather == "Mist" ]]; then
+            weather_emoji='\U1F32B'
+          elif [[ $weather == "Clear" ]]; then
+            # TODO: Choose between sun and moon based on time
+            weather_emoji='\U1F305'
+          elif [[ $weather == "Clouds" ]]; then
+            weather_emoji="\U2601"
+          else
+            # Display Earth :)
+            weather_emoji="\U1F30D"
+          fi
+          ;;
+        *)
+          # Some other HTTP code, ignore for now
+          temperature="Data missing"
+          weather_emoji=
+          ;;
+      esac
+
+      if [ $weather_emoji ]; then
+        echo "temperature=$temperature; weather_emoji=\"$weather_emoji\"" > "$WEATHERFILE"
+      fi
+    else
+      . $WEATHERFILE
+    fi
+
+    echo -e "$temperature\u00B0C | $weather_emoji"
+}
+
+export PS1='\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] [ $(get_weather) ]\n\$ '
