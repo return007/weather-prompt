@@ -3,6 +3,12 @@ Displays current weather information in bash PS1
 
 Fetches hourly data from https://openweathermap.org/ and stores it locally.
 
+## How bad will it look
+
+Please don't judge the overall prompt, but only a part of it that shows temperature and sky conditions.
+
+![](demo.png)
+
 ## How to
 
 1. Hahaha! First of all, star this repository. Hahaha! Just kidding, only do it you want to make me happy :)
@@ -32,4 +38,5 @@ Fetches hourly data from https://openweathermap.org/ and stores it locally.
 
 #### TODO
 
+ * At night, please don't show sun!!!
  * Installer script
