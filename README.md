@@ -1,7 +1,7 @@
 # weather-prompt
 Displays current weather information in bash PS1
 
-Fetches hourly data from https://openweathermap.org/ and stores it locally.
+Fetches current weather data, once in an hour from https://openweathermap.org/ and stores it locally.
 
 ## How bad will it look
 
@@ -12,31 +12,31 @@ Please don't judge the overall prompt, but only a part of it that shows temperat
 ## How to
 
 1. Hahaha! First of all, star this repository. Hahaha! Just kidding, only do it you want to make me happy :)
-2. Clone the repository and move `.promptrc` to your home directory.
-
-   OR, run the following
-
+2. Clone the repository.
    ```
-   $ wget https://raw.githubusercontent.com/return007/weather-prompt/main/.promptrc
+   $ git clone https://github.com/return007/weather-prompt
    ```
 
-3. Source `.promptrc` in your `.bashrc`
-
+3. `cd` into the cloned repository.
    ```
-   $ echo "source .promptrc" >> ~/.bashrc
+   $ cd weather-prompt
    ```
 
-4. Register on https://home.openweathermap.org/users/sign_up to get your free API key
-5. Add the name of your city and APIKEY in your `~/.promptrc` file.
-6. Source your `~/.bashrc` to see the changes.
+4. Run the installer
+   ```
+   $ ./install.sh
+   ```
+
+5. Happy awareness of the atmosphere around you!
 
 ## STATUS
 
 #### DONE
 
  * Basic functionality
+ * At night, please don't show sun!!!
+ * Installer script
 
 #### TODO
 
- * At night, please don't show sun!!!
- * Installer script
+ * There are lots of things, but I don't want to do them right now :relieved: 
