@@ -1,15 +1,11 @@
 WEATHERFILE=`realpath ~/.weatherinfo`
-CITY=""
-APIKEY=""
+CITY=
+APIKEY=
 
 get_weather () {
     # Fetches weather data from OpenWeather API, when needed.
     # The weather data is fetched once an hour
     # Most recent weather data is stored offline in $WEATHERFILE
-
-    # Arguments:
-    #  $1 : Name of the current city to fetch weather data for
-    #  $2 : Free APIKEY from https://openweathermap.org/
 
     fetch_weather=
     if [ -f "$WEATHERFILE" ]; then
